@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">FilterNew</string>
+
+    <string name="label_search">Search</string>
+    <string name="label_title">Title</string>
+    <string name="label_desc">Description</string>
+    <string name="label_pub_date">Pub date</string>
 </resources>
