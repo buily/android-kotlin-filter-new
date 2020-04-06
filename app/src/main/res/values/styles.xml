@@ -8,4 +8,21 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="AppTheme.NoActionBar" parent="AppTheme">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="ToolbarTheme" parent="ThemeOverlay.AppCompat.Light">
+
+        <item name="searchViewStyle">@style/searchStyle</item>
+
+    </style>
+
+    <style name="searchStyle" parent="Widget.AppCompat.SearchView.ActionBar">
+        <item name="android:queryHint">@string/label_search</item>
+        <item name="android:searchIcon">@null</item>
+
+    </style>
+
 </resources>
