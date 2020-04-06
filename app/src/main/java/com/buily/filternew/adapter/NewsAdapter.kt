@@ -15,7 +15,6 @@ class NewsAdapter(private var newsList: List<News>) :
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NewsHolder {
-
         return NewsHolder(
             ItemNewsBinding.inflate(
                 LayoutInflater.from(parent.context),
@@ -26,12 +25,10 @@ class NewsAdapter(private var newsList: List<News>) :
     }
 
     override fun onBindViewHolder(holder: NewsHolder, position: Int) {
-
         holder.binding.item = newsList[position]
     }
 
     override fun getItemCount(): Int {
-
         return newsList.size
     }
 

@@ -3,32 +3,24 @@ package com.buily.filternew
 import android.annotation.SuppressLint
 import android.app.SearchManager
 import android.content.Context
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.Handler
-import android.util.Log
 import android.view.Menu
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.databinding.DataBindingUtil
 import com.buily.filternew.adapter.NewsAdapter
 import com.buily.filternew.databinding.ActivityMainBinding
 import com.buily.filternew.model.News
 import io.reactivex.Observable
-import io.reactivex.Observer
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.disposables.Disposable
-import io.reactivex.observers.DisposableObserver
 import io.reactivex.schedulers.Schedulers
 import javax.xml.parsers.SAXParser
 import javax.xml.parsers.SAXParserFactory
 
 class MainActivity : AppCompatActivity() {
 
-    private var mCompositeDisposable = CompositeDisposable()
-    private var mResult: String = ""
-
+    @SuppressLint("CheckResult")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -37,7 +29,7 @@ class MainActivity : AppCompatActivity() {
 
         setSupportActionBar(binding.toolbar)
 
-        var data = mutableListOf<News>()
+        val data = mutableListOf<News>()
 
         val adapter = NewsAdapter(data)
 
@@ -53,13 +45,10 @@ class MainActivity : AppCompatActivity() {
 
             it.onNext(xmlParser.arr)
             it.onComplete()
-
         }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe { t: List<News>? -> t?.let { adapter.setData(it) } }
-
-
     }
 
     @SuppressLint("ResourceAsColor")
@@ -78,21 +67,13 @@ class MainActivity : AppCompatActivity() {
                 searchView.clearFocus()
                 searchView.setQuery("", false)
                 searchItem.collapseActionView()
-
                 return true
-
-
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-
                 return false
             }
-
         })
-
         return true
     }
-
-
 }
