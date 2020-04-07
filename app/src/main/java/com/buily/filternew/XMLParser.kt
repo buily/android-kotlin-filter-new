@@ -7,6 +7,7 @@ import org.xml.sax.helpers.DefaultHandler
 class XMLParser : DefaultHandler() {
 
     val arr = mutableListOf<News>()
+    private var isItem: Boolean = false
 
     var item: News? = null
     private lateinit var builder: StringBuilder
@@ -20,6 +21,7 @@ class XMLParser : DefaultHandler() {
         super.startElement(uri, localName, qName, attributes)
         if (qName == Constant.ITEM) {
             item = News()
+            isItem = true
         }
         if (qName.equals(Constant.IMAGE)) {
             val img: String? = attributes?.getValue("url")
@@ -39,16 +41,19 @@ class XMLParser : DefaultHandler() {
     override fun endElement(uri: String?, localName: String?, qName: String?) {
         super.endElement(uri, localName, qName)
         when (qName) {
+
             Constant.TITLE -> item?.title = builder.toString()
             Constant.LINK -> item?.link = builder.toString()
             Constant.PUB_DATE -> item?.pubDate = builder.toString()
             Constant.DESC -> {
-//                var s: String = builder.toString()
-//                val v: String = "target=\"_blank\">"
-//                val index = s.indexOf(v) + v.length
-//                s = s.substring(index)
-//                s = s.substring(0, s.indexOf("</a>"))
-                item?.desc = builder.toString()
+                if (!isItem) return
+                val s: String = builder.toString()
+                val v = "target=\"_blank\">"
+                val v2 = "</a>"
+                val s2: List<String> = s.split(v)
+                val s3: List<String> = s2[1].split(v2)
+                item?.desc = s3[0]
+                isItem = true
             }
             Constant.ITEM -> item?.let { arr.add(it) }
             else -> return

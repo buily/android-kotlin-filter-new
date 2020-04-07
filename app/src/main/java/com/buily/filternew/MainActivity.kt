@@ -3,8 +3,10 @@ package com.buily.filternew
 import android.annotation.SuppressLint
 import android.app.SearchManager
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
@@ -20,35 +22,56 @@ import javax.xml.parsers.SAXParserFactory
 
 class MainActivity : AppCompatActivity() {
 
-    @SuppressLint("CheckResult")
+    private lateinit var adapter: NewsAdapter
+    private lateinit var binding: ActivityMainBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val binding: ActivityMainBinding =
-            DataBindingUtil.setContentView(this, R.layout.activity_main)
-
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         setSupportActionBar(binding.toolbar)
 
         val data = mutableListOf<News>()
 
-        val adapter = NewsAdapter(data)
+        adapter = NewsAdapter(data)
+        adapter.onItemClick = {
+
+            val intent = Intent(this, WebViewActivity::class.java)
+            intent.putExtra("link", it.link)
+            startActivity(intent)
+
+        }
 
         binding.recycleMain.adapter = adapter
 
-        Observable.create<List<News>> {
-            val api = "https://news.google.de/news/feeds?pz=1&cf=vi_vn&ned=vi_vn&hl=vi_vn&q=ly"
 
+    }
+
+
+    @SuppressLint("CheckResult")
+    private fun getData(key: String) {
+
+        binding.recycleMain.visibility = View.GONE
+        binding.progressBar.visibility = View.VISIBLE
+
+        Observable.create<List<News>> {
+
+            val api = "https://news.google.de/news/feeds?pz=1&cf=vi_vn&ned=vi_vn&hl=vi_vn&q=$key"
             val factory: SAXParserFactory = SAXParserFactory.newInstance()
             val parser: SAXParser = factory.newSAXParser()
             val xmlParser = XMLParser()
             parser.parse(api, xmlParser)
-
             it.onNext(xmlParser.arr)
             it.onComplete()
         }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe { t: List<News>? -> t?.let { adapter.setData(it) } }
+            .subscribe { t: List<News>? ->
+                t?.let { adapter.setData(it) }
+                binding.recycleMain.visibility = View.VISIBLE
+                binding.progressBar.visibility = View.GONE
+            }
+
     }
 
     @SuppressLint("ResourceAsColor")
@@ -67,6 +90,7 @@ class MainActivity : AppCompatActivity() {
                 searchView.clearFocus()
                 searchView.setQuery("", false)
                 searchItem.collapseActionView()
+                query?.let { getData(it) }
                 return true
             }
 
@@ -77,3 +101,7 @@ class MainActivity : AppCompatActivity() {
         return true
     }
 }
+
+
+
+

@@ -9,6 +9,8 @@ import com.buily.filternew.model.News
 class NewsAdapter(private var newsList: List<News>) :
     RecyclerView.Adapter<NewsAdapter.NewsHolder>() {
 
+    var onItemClick: ((News) -> Unit)? = null
+
     fun setData(newsData: List<News>) {
         newsList = newsData
         notifyDataSetChanged()
@@ -26,6 +28,10 @@ class NewsAdapter(private var newsList: List<News>) :
 
     override fun onBindViewHolder(holder: NewsHolder, position: Int) {
         holder.binding.item = newsList[position]
+
+        holder.binding.constrainRoot.setOnClickListener {
+            onItemClick?.invoke(newsList[position])
+        }
     }
 
     override fun getItemCount(): Int {
@@ -35,4 +41,6 @@ class NewsAdapter(private var newsList: List<News>) :
     class NewsHolder(itemView: ItemNewsBinding) : RecyclerView.ViewHolder(itemView.root) {
         val binding = itemView
     }
+
+
 }
